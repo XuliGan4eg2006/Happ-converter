@@ -61,6 +61,8 @@ def main():
         f.write(output)
 
     vless_links = parse_response(output)
+
+    print("Extracted VLESS links: \n")
     print("\n".join(vless_links))
 
 if __name__ == "__main__":
