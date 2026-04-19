@@ -33,6 +33,8 @@ def parse_response(response_text):
                                 params["sni"] = t["serverName"]
                             if t.get("fingerprint"):
                                 params["fp"] = t["fingerprint"]
+                            if t.get("alpn"):
+                                params["alpn"] = ",".join(t["alpn"])
                         net = ss.get("network", "tcp")
                         if net == "ws":
                             ws = ss.get("wsSettings", {})

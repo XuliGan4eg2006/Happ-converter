@@ -57,8 +57,7 @@ def main():
     except Exception:
         output = raw.decode("utf-8", errors="replace")
 
-    # print(output)
-    with open("resp.txt", "w") as f:
+    with open("debug_response.txt", "w") as f:
         f.write(output)
 
     vless_links = parse_response(output)
