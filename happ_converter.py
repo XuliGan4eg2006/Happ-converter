@@ -7,6 +7,7 @@ import uuid
 import requests
 
 from parser import parse_response
+from server import start as start_server
 
 def autogenerate_hwid() -> str:
     return uuid.uuid4().hex[:16]
@@ -64,6 +65,11 @@ def main():
 
     print("Extracted VLESS links: \n")
     print("\n".join(vless_links))
+
+    print("Start sub server? (y/n)")
+    server_prompt = get_input(">")
+    if server_prompt == "y":
+        start_server(vless_links)
 
 if __name__ == "__main__":
     main()
