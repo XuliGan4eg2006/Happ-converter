@@ -8,6 +8,7 @@ import requests
 
 from parser import parse_response
 from server import start as start_server
+from happ_decrypt import decrypt as happ_decrypt
 
 def autogenerate_hwid() -> str:
     return uuid.uuid4().hex[:16]
@@ -23,6 +24,15 @@ def main():
     if not sub_url:
         print("Error: subscription URL is required.", file=sys.stderr)
         sys.exit(1)
+
+    if sub_url.startswith("happ://crypt"):
+        print("  → detected happ://crypt link, decrypting...")
+        try:
+            sub_url = happ_decrypt(sub_url)
+            print(f"  → decrypted URL: {sub_url}")
+        except Exception as e:
+            print(f"Error: decryption failed: {e}", file=sys.stderr)
+            sys.exit(1)
 
     hwid_input = get_input("HWID (leave blank to autogenerate): ")
     hwid = hwid_input if hwid_input else autogenerate_hwid()
@@ -66,7 +76,7 @@ def main():
     print("Extracted VLESS links: \n")
     print("\n".join(vless_links))
 
-    print("Start sub server? (y/n)")
+    print("\nStart sub server? (y/n)")
     server_prompt = get_input(">")
     if server_prompt == "y":
         start_server(vless_links)
