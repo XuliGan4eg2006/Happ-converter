@@ -36,7 +36,7 @@
 
 ```bash
 git clone https://github.com/XuliGan4eg2006/Happ-converter
-cd subextractor
+cd Happ-converter
 pip3 install -r requirements.txt
 ```
 
