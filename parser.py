@@ -35,6 +35,14 @@ def _stream_params(ss):
         grpc = ss.get("grpcSettings", {})
         if grpc.get("serviceName"):
             params["serviceName"] = grpc["serviceName"]
+    elif net == "xhttp":
+        xh = ss.get("xhttpSettings", {})
+        if xh.get("path"):
+            params["path"] = xh["path"]
+        if xh.get("host"):
+            params["host"] = xh["host"]
+        if xh.get("mode"):
+            params["mode"] = xh["mode"]
     return params
 
 def parse_response(response_text):
