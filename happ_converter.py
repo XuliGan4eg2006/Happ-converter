@@ -6,11 +6,15 @@ import sys
 import uuid
 import requests
 
+from urllib.parse import urlparse
+
 from parser import parse_response
 from server import start as start_server
 from happ_decrypt import decrypt as happ_decrypt
 from profiles import DEFAULT_HEADERS, edit_headers, offer_save, select_profile
 from ipdetect import detect_public_ip
+from export_configs import export_for_profile
+import geoassets
 
 def autogenerate_hwid() -> str:
     return uuid.uuid4().hex[:16]
@@ -41,6 +45,13 @@ def build_headers() -> dict:
         edit_headers(headers)
 
     return headers
+
+
+def config_dir_name(profile: dict | None, sub_url: str) -> str:
+    """Name for configs/<name>/ — the profile name, else the subscription host."""
+    if profile and profile.get("name"):
+        return profile["name"]
+    return urlparse(sub_url).hostname or "profile"
 
 
 def refresh_profile_ip(headers: dict) -> None:
@@ -107,6 +118,23 @@ def main():
 
     print("Extracted VLESS links: \n")
     print("\n".join(vless_links))
+
+    # Share links cannot carry routing, balancers or the observatory, so also
+    # keep each entry as the full Xray config it arrived as.
+    try:
+        out_dir, count = export_for_profile(output, config_dir_name(profile, sub_url))
+        print(f"\n  → wrote {count} full Xray configs to {out_dir}/")
+    except Exception as e:
+        print(f"\nWarning: could not export configs: {e}", file=sys.stderr)
+
+    # Configs using geosite:/geoip: rules will not start without the .dat files.
+    needed = geoassets.scan_requirements(output)
+    if needed:
+        print(f"  → geo rules need {', '.join(sorted(needed))}")
+        try:
+            geoassets.ensure(needed)
+        except Exception as e:
+            print(f"Warning: could not fetch geo assets: {e}", file=sys.stderr)
 
     offer_save(sub_url, headers, profile)
 

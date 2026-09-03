@@ -1,0 +1,18 @@
+# --- secrets: subscription URLs, credentials, exported server configs ---
+profiles.json
+debug_response.txt
+configs/
+web-sub/sub/*
+!web-sub/sub/randomstring
+
+# --- downloaded / generated assets ---
+geoip.dat
+geosite.dat
+*.zip
+
+# --- python / editor ---
+__pycache__/
+*.py[cod]
+.idea/
+.venv/
+venv/
